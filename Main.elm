@@ -17,7 +17,17 @@ rows = 4
 
 model : Model
 model =
-    { lights = [ True, False, False ] }
+    { lights = [ True, False, False, False ] }
+
+
+
+toggleLightAndAdjacents : Int -> List Bool -> List Bool
+toggleLightAndAdjacents index lights = 
+    let
+        isLightOrAdjacent i = i == index || (i-1) == index || (i+1) == index
+    in
+        List.indexedMap (\ i l -> if isLightOrAdjacent i then not l else l) model.lights
+
 
 
 update : Msg -> Model -> Model
@@ -25,7 +35,7 @@ update msg model =
     case msg of
         ToggleLight index ->
             let
-                lights = List.indexedMap (\i l -> if i == index then not l else l) model.lights
+                lights = toggleLightAndAdjacents index model.lights
             in
                 { model | lights = lights }
 
