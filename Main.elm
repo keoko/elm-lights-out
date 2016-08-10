@@ -9,26 +9,22 @@ main =
 
 type Msg = ToggleLight
 
-type alias Model =
-    {
-        on: Bool
-    }
+type alias Model = { lights: List Bool }
 
 model : Model
 model =
-    { on = True }
+    { lights = [ True, False, True, True, True, False ] }
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ToggleLight -> { model | on = not model.on }
+        ToggleLight -> { model | lights = List.map not model.lights }
 
 
-
-viewBox : Model -> Html Msg
-viewBox model =
-    div [ style [ ("background", if model.on then "blue" else "black" )
+viewBox : Bool -> Html Msg
+viewBox lightOn =
+    div [ style [ ("background", if lightOn then "blue" else "black" )
                 , ("width", "10vw")
                 , ("height", "10vw")
                 , ("margin", "0.1vw")
@@ -38,7 +34,4 @@ viewBox model =
 
 view : Model -> Html Msg
 view model =
-    div [] [ viewBox model
-           , viewBox model
-           , viewBox model
-           ]
+    div [] ( List.map viewBox model.lights )
