@@ -1,3 +1,8 @@
+# Notes
+
+
+## Whit this compile :|
+```
 import Html exposing (Html, div, h1, img, text, pre, hr)
 import Html.Attributes exposing (..)
 import Html.App exposing (beginnerProgram)
@@ -26,8 +31,8 @@ update msg model =
 
 
 
-viewBox : Model -> Html Msg
-viewBox model =
+viewBox : Html Msg
+viewBox =
     div [ style [ ("background", if model.on then "blue" else "black" )
                 , ("width", "10vw")
                 , ("height", "10vw")
@@ -38,7 +43,8 @@ viewBox model =
 
 view : Model -> Html Msg
 view model =
-    div [] [ viewBox model
-           , viewBox model
-           , viewBox model
+    div [] [ viewBox
+           , viewBox
+           , viewBox
            ]
+``` 
