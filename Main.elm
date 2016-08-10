@@ -2,36 +2,45 @@ import Html exposing (Html, div, h1, img, text, pre, hr)
 import Html.Attributes exposing (..)
 import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
+import List exposing (repeat)
 
 main : Program Never
 main =
   beginnerProgram { model = model, view = view, update = update }
 
-type Msg = ToggleLight
+type Msg = ToggleLight Int
 
 type alias Model = { lights: List Bool }
 
+rows : Int
+rows = 4
+
 model : Model
 model =
-    { lights = [ True, False, True, True, True, False ] }
+    { lights = [ True, False, False ] }
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ToggleLight -> { model | lights = List.map not model.lights }
+        ToggleLight index ->
+            let
+                lights = List.indexedMap (\i l -> if i == index then not l else l) model.lights
+            in
+                { model | lights = lights }
 
 
-viewBox : Bool -> Html Msg
-viewBox lightOn =
+
+viewBox : Int -> Bool -> Html Msg
+viewBox index lightOn =
     div [ style [ ("background", if lightOn then "blue" else "black" )
                 , ("width", "10vw")
                 , ("height", "10vw")
                 , ("margin", "0.1vw")
                 ]
 
-        , onClick ToggleLight ] []
+        , onClick <| ToggleLight index ] []
 
 view : Model -> Html Msg
 view model =
-    div [] ( List.map viewBox model.lights )
+    div [] ( List.indexedMap viewBox model.lights )
