@@ -3,6 +3,7 @@ import Html.Attributes exposing (..)
 import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
 import List exposing (repeat)
+import Debug exposing (log)
 
 main : Program Never
 main =
@@ -24,9 +25,9 @@ model =
 toggleLightAndAdjacents : Int -> List Bool -> List Bool
 toggleLightAndAdjacents index lights = 
     let
-        isLightOrAdjacent i = i == index || (i-1) == index || (i+1) == index
+        isLightOrAdjacent i = i == index || i == (index-1) || i == (index+1)
     in
-        List.indexedMap (\ i l -> if isLightOrAdjacent i then not l else l) model.lights
+        List.indexedMap (\ i l -> if isLightOrAdjacent i then not l else l) lights
 
 
 
@@ -35,9 +36,9 @@ update msg model =
     case msg of
         ToggleLight index ->
             let
-                lights = toggleLightAndAdjacents index model.lights
+                lights' = toggleLightAndAdjacents index model.lights
             in
-                { model | lights = lights }
+                { model | lights = lights' }
 
 
 
