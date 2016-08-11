@@ -2,6 +2,7 @@ module List.Split exposing (..)
 {-| Split lists into chunks
 # Splitters
 @docs chunksOfLeft, chunksOfRight
+Copied from https://github.com/circuithub/elm-list-split
 -}
 
 import List exposing (..)

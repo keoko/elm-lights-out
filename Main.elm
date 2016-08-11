@@ -27,10 +27,17 @@ model =
     { lights = repeat (columns * 4) True }
 
 
-toggleLightAndAdjacents : Int -> List Bool -> List Bool
+
+adjacentLights : Int -> Lights -> List Int
+adjacentLights index lights =
+    [ 0, 1]
+
+
+toggleLightAndAdjacents : Int -> Lights -> Lights
 toggleLightAndAdjacents index lights =
     let
-        isLightOrAdjacent i = i == index || i == (index-1) || i == (index+1)
+        adjacents = (adjacentLights index lights)
+        isLightOrAdjacent i = i == index || List.member i adjacents
     in
         List.indexedMap (\ i l -> if isLightOrAdjacent i then not l else l) lights
 
