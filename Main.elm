@@ -1,4 +1,4 @@
-import Html exposing (Html, div, h1, img, text, pre, hr)
+import Html exposing (Html, div, table, tr, td, text)
 import Html.Attributes exposing (..)
 import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
@@ -21,14 +21,12 @@ model =
     { lights = [ True, False, False, False ] }
 
 
-
 toggleLightAndAdjacents : Int -> List Bool -> List Bool
-toggleLightAndAdjacents index lights = 
+toggleLightAndAdjacents index lights =
     let
         isLightOrAdjacent i = i == index || i == (index-1) || i == (index+1)
     in
         List.indexedMap (\ i l -> if isLightOrAdjacent i then not l else l) lights
-
 
 
 update : Msg -> Model -> Model
@@ -41,10 +39,9 @@ update msg model =
                 { model | lights = lights' }
 
 
-
 viewBox : Int -> Bool -> Html Msg
 viewBox index lightOn =
-    div [ style [ ("background", if lightOn then "blue" else "black" )
+    td [ style [ ("background", if lightOn then "blue" else "black" )
                 , ("width", "10vw")
                 , ("height", "10vw")
                 , ("margin", "0.1vw")
@@ -54,4 +51,5 @@ viewBox index lightOn =
 
 view : Model -> Html Msg
 view model =
-    div [] ( List.indexedMap viewBox model.lights )
+    table []
+        [tr [] ( List.indexedMap viewBox model.lights )]

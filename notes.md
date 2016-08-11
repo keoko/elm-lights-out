@@ -48,3 +48,7 @@ view model =
            , viewBox
            ]
 ``` 
+
+## why model is visible inside funtions if it's not passed as argument
+## how to add logs without adding let expressions
+## adding HTML elements is not easy in some cases
