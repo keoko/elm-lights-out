@@ -3,7 +3,8 @@ import Html.Attributes exposing (..)
 import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
 import List exposing (repeat)
-import Debug exposing (log)
+--import Debug exposing (log)
+import List.Split exposing (chunksOfLeft)
 
 main : Program Never
 main =
@@ -11,14 +12,19 @@ main =
 
 type Msg = ToggleLight Int
 
-type alias Model = { lights: List Bool }
+type alias Model = { lights: Lights }
+
+type alias Lights = List Bool
 
 rows : Int
 rows = 4
 
+columns : Int
+columns = 4
+
 model : Model
 model =
-    { lights = [ True, False, False, False ] }
+    { lights = repeat (columns * 4) True }
 
 
 toggleLightAndAdjacents : Int -> List Bool -> List Bool
@@ -49,7 +55,16 @@ viewBox index lightOn =
 
         , onClick <| ToggleLight index ] []
 
+
+viewRow : Lights -> Html Msg
+viewRow row =
+    tr [] ( List.indexedMap viewBox row )
+
+
 view : Model -> Html Msg
 view model =
-    table []
-        [tr [] ( List.indexedMap viewBox model.lights )]
+    let
+        chunks = chunksOfLeft rows model.lights
+    in
+        table []
+            (List.map viewRow chunks)
