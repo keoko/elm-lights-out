@@ -1,16 +1,19 @@
 # Notes
 
 ## Todo
-- test to toggle adjacent lights
-- toggle adjacent lights 
+- Point type
+- pointToIndex function
 - control logic when the game ends
 - random toggled lights at app init
-- server
 
-## Doubts
+## Phase 2
+- server state
+
+## Doubts
 - how to test functions in package Main?
+- how to log easily
 
-## Why this compile :|
+## Why this compile :|
 ```
 import Html exposing (Html, div, h1, img, text, pre, hr)
 import Html.Attributes exposing (..)
