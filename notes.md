@@ -7,6 +7,8 @@
 - random toggled lights at app init
 - server
 
+## Doubts
+- how to test functions in package Main?
 
 ## Why this compile :|
 ```

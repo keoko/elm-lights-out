@@ -1,14 +1,11 @@
+module LightsOut exposing (adjacentLights, model, view, update, rows, columns)
+
 import Html exposing (Html, div, table, tr, td, text)
 import Html.Attributes exposing (..)
-import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
 import List exposing (repeat)
 --import Debug exposing (log)
 import List.Split exposing (chunksOfLeft)
-
-main : Program Never
-main =
-  beginnerProgram { model = model, view = view, update = update }
 
 type Msg = ToggleLight Int
 
@@ -27,16 +24,20 @@ model =
     { lights = repeat (columns * 4) True }
 
 
-
-adjacentLights : Int -> Lights -> List Int
-adjacentLights index lights =
-    [ 0, 1]
-
+adjacentLights : Int -> List Int
+adjacentLights index =
+    let
+        left = index - 1
+        right = index + 1
+        up = index - columns
+        down = index + columns
+    in
+        List.filter (\x -> x >= 0 && x <= (rows * columns))[left, right, up, down]
 
 toggleLightAndAdjacents : Int -> Lights -> Lights
 toggleLightAndAdjacents index lights =
     let
-        adjacents = (adjacentLights index lights)
+        adjacents = adjacentLights index
         isLightOrAdjacent i = i == index || List.member i adjacents
     in
         List.indexedMap (\ i l -> if isLightOrAdjacent i then not l else l) lights
@@ -53,7 +54,7 @@ update msg model =
 
 
 viewBox : Int -> Bool -> Html Msg
-viewBox index lightOn =
+viewBox rowIndex lightOn =
     td [ style [ ("background", if lightOn then "blue" else "black" )
                 , ("width", "10vw")
                 , ("height", "10vw")
@@ -64,8 +65,8 @@ viewBox index lightOn =
 
 
 viewRow : Lights -> Html Msg
-viewRow row =
-    tr [] ( List.indexedMap viewBox row )
+viewRow rowIndex rowlights =
+    tr [] ( List.indexedMap (viewBox rowIndex) rowLights )
 
 
 view : Model -> Html Msg
