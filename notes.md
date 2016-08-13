@@ -1,18 +1,16 @@
 # Notes
 
-## Todo
-- Point type
-- pointToIndex function
-- initialSeed with random value
-
 ## Phase 2
 - server state
 
 ## Doubts
 - how to test functions in package Main?
 - how to log easily
+- What's the best way to init the game with a random setup. I used the Date.now subscription but it's a bit too hackish, as the game is initialised twice.
+- adding HTML elements is not easy in some cases
 
-## Why this compile :|
+## Issues
+Why this compiles :| ???
 ```
 import Html exposing (Html, div, h1, img, text, pre, hr)
 import Html.Attributes exposing (..)
@@ -61,5 +59,3 @@ view model =
 ``` 
 
 ## why model is visible inside funtions if it's not passed as argument
-## how to add logs without adding let expressions
-## adding HTML elements is not easy in some cases
