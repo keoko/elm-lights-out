@@ -12,7 +12,7 @@ port currentTimestamp : (Int -> msg) -> Sub msg
 
 type Msg = ToggleLight Point
     | RePlay
-    | CurrentTimestamp Int
+    | InitWithTimestamp Int
 
 type alias Model =
     { lights : Lights
@@ -33,7 +33,7 @@ columns = 3
 init : (Model, Cmd msg)
 init =
     let
-        seed = initialSeed 1000
+        seed = initialSeed 1
     in
         randomLights seed ! []
 
@@ -81,10 +81,11 @@ toggleLightAndAdjacents (columnIndex, rowIndex) lights =
         index = pointToIndex (columnIndex, rowIndex)
         adjacents = adjacentLights (columnIndex, rowIndex)
         isLightOrAdjacent i = i == index || List.member (indexToPoint i) adjacents
+        toggleLight i l = if isLightOrAdjacent i then not l else l
         l = log "adjacents" adjacents
         l' = log "member" <| List.member (columnIndex, rowIndex) adjacents
     in
-        List.indexedMap (\i l -> if isLightOrAdjacent i then not l else l) lights
+        List.indexedMap toggleLight lights
 
 
 isGameOver : Model -> Bool
@@ -105,12 +106,13 @@ update msg model =
         RePlay ->
             randomLights model.seed ! []
 
-        CurrentTimestamp timestamp ->
+        InitWithTimestamp timestamp ->
             let
-                l = log "timestamp" timestamp
+                l = log "current timestamp" timestamp
                 seed = initialSeed timestamp
             in
             randomLights seed ! []
+
 
 viewLight : Point -> Bool -> Html Msg
 viewLight (columnIndex, rowIndex) lightOn =
@@ -153,4 +155,4 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    currentTimestamp CurrentTimestamp
+    currentTimestamp InitWithTimestamp

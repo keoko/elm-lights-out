@@ -8778,7 +8778,7 @@ var _user$project$LightsOut$randomLights = function (seed) {
 	return {lights: lights, seed: seed};
 };
 var _user$project$LightsOut$init = function () {
-	var seed = _elm_lang$core$Random$initialSeed(1000);
+	var seed = _elm_lang$core$Random$initialSeed(1);
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		_user$project$LightsOut$randomLights(seed),
@@ -8828,13 +8828,11 @@ var _user$project$LightsOut$toggleLightAndAdjacents = F2(
 				_user$project$LightsOut$indexToPoint(i),
 				adjacents);
 		};
-		return A2(
-			_elm_lang$core$List$indexedMap,
-			F2(
-				function (i, l) {
-					return isLightOrAdjacent(i) ? _elm_lang$core$Basics$not(l) : l;
-				}),
-			lights);
+		var toggleLight = F2(
+			function (i, l) {
+				return isLightOrAdjacent(i) ? _elm_lang$core$Basics$not(l) : l;
+			});
+		return A2(_elm_lang$core$List$indexedMap, toggleLight, lights);
 	});
 var _user$project$LightsOut$update = F2(
 	function (msg, model) {
@@ -8867,7 +8865,7 @@ var _user$project$LightsOut$update = F2(
 			default:
 				var _p18 = _p15._0;
 				var seed = _elm_lang$core$Random$initialSeed(_p18);
-				var l = A2(_elm_lang$core$Debug$log, 'timestamp', _p18);
+				var l = A2(_elm_lang$core$Debug$log, 'current timestamp', _p18);
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_user$project$LightsOut$randomLights(seed),
@@ -8880,11 +8878,11 @@ var _user$project$LightsOut$Model = F2(
 	function (a, b) {
 		return {lights: a, seed: b};
 	});
-var _user$project$LightsOut$CurrentTimestamp = function (a) {
-	return {ctor: 'CurrentTimestamp', _0: a};
+var _user$project$LightsOut$InitWithTimestamp = function (a) {
+	return {ctor: 'InitWithTimestamp', _0: a};
 };
 var _user$project$LightsOut$subscriptions = function (model) {
-	return _user$project$LightsOut$currentTimestamp(_user$project$LightsOut$CurrentTimestamp);
+	return _user$project$LightsOut$currentTimestamp(_user$project$LightsOut$InitWithTimestamp);
 };
 var _user$project$LightsOut$RePlay = {ctor: 'RePlay'};
 var _user$project$LightsOut$ToggleLight = function (a) {
