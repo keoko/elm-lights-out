@@ -1,9 +1,11 @@
-import Html.App exposing (beginnerProgram)
+import Html.App exposing (program)
 import LightsOut
 
 main : Program Never
 main =
-  beginnerProgram { model = LightsOut.model
-                  , view = LightsOut.view
-                  , update = LightsOut.update }
+  program { init = LightsOut.init
+          , view = LightsOut.view
+          , update = LightsOut.update
+          , subscriptions = LightsOut.subscriptions
+          }
 

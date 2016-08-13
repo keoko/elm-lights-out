@@ -1,4 +1,4 @@
-module LightsOut exposing (adjacentLights, model, view, update, rows, columns)
+port module LightsOut exposing (adjacentLights, init, view, update, subscriptions, rows, columns)
 
 import Html exposing (Html, div, table, tr, td, text, button, strong)
 import Html.Attributes exposing (..)
@@ -8,8 +8,11 @@ import Debug exposing (log)
 import List.Split exposing (chunksOfLeft)
 import Random exposing (initialSeed, Seed, Generator, generate)
 
+port currentTimestamp : (Int -> msg) -> Sub msg
+
 type Msg = ToggleLight Point
     | RePlay
+    | CurrentTimestamp Int
 
 type alias Model =
     { lights : Lights
@@ -27,12 +30,12 @@ columns : Int
 columns = 3
 
 
-model : Model
-model =
+init : (Model, Cmd msg)
+init =
     let
         seed = initialSeed 1000
     in
-        randomLights seed
+        randomLights seed ! []
 
 
 randomLights : Seed -> Model
@@ -88,7 +91,8 @@ isGameOver : Model -> Bool
 isGameOver model =
     List.all ((==) True) model.lights
 
-update : Msg -> Model -> Model
+
+update : Msg -> Model -> (Model, Cmd msg)
 update msg model =
     case msg of
         ToggleLight (columnIndex, rowIndex) ->
@@ -96,10 +100,17 @@ update msg model =
                 lights' = toggleLightAndAdjacents (columnIndex, rowIndex) model.lights
                 l = log "toggle:" (lights', columnIndex, rowIndex)
             in
-                { model | lights = lights' }
+                { model | lights = lights' } ! []
 
         RePlay ->
-            randomLights model.seed
+            randomLights model.seed ! []
+
+        CurrentTimestamp timestamp ->
+            let
+                l = log "timestamp" timestamp
+                seed = initialSeed timestamp
+            in
+            randomLights seed ! []
 
 viewLight : Point -> Bool -> Html Msg
 viewLight (columnIndex, rowIndex) lightOn =
@@ -139,3 +150,7 @@ view model =
                       , button [ onClick RePlay ] [ text "restart" ]
                       ]
         ]
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    currentTimestamp CurrentTimestamp
