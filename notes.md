@@ -3,8 +3,7 @@
 ## Todo
 - Point type
 - pointToIndex function
-- control logic when the game ends
-- random toggled lights at app init
+- initialSeed with random value
 
 ## Phase 2
 - server state

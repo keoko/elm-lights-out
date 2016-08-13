@@ -6,26 +6,47 @@ import Html.Events exposing (onClick)
 import List exposing (repeat)
 import Debug exposing (log)
 import List.Split exposing (chunksOfLeft)
+import Random exposing (initialSeed, Seed, Generator, generate)
 
-type Msg = ToggleLight (Int, Int)
+type Msg = ToggleLight Point
     | RePlay
 
-type alias Model = { lights: Lights }
+type alias Model =
+    { lights : Lights
+    , seed : Seed
+    }
 
 type alias Lights = List Bool
 
+type alias Point = (Int, Int)
+
 rows : Int
-rows = 4
+rows = 3
 
 columns : Int
-columns = 4
+columns = 3
+
 
 model : Model
 model =
-    { lights = repeat (columns * rows) True }
+    let
+        seed = initialSeed 1000
+    in
+        randomLights seed
 
 
-adjacentLights : (Int, Int) -> List (Int,Int)
+randomLights : Seed -> Model
+randomLights seed =
+    let
+        numLights = rows * columns
+        (lights, seed) = Random.step (Random.list numLights Random.bool) seed
+    in
+        { lights = lights
+        , seed = seed
+        }
+
+
+adjacentLights : Point -> List (Int,Int)
 adjacentLights (columnIndex, rowIndex) =
     let
         left = (columnIndex - 1, rowIndex)
@@ -37,7 +58,7 @@ adjacentLights (columnIndex, rowIndex) =
         List.filter pointWithinBoundaries [left, right, up, down]
 
 
-indexToPoint : Int -> (Int, Int)
+indexToPoint : Int -> Point
 indexToPoint index =
     let
         row = index // columns
@@ -46,10 +67,15 @@ indexToPoint index =
         (column, row)
 
 
-toggleLightAndAdjacents : (Int, Int) -> Lights -> Lights
+pointToIndex : Point -> Int
+pointToIndex (column, row) =
+    column + row * columns
+
+
+toggleLightAndAdjacents : Point -> Lights -> Lights
 toggleLightAndAdjacents (columnIndex, rowIndex) lights =
     let
-        index = columnIndex + rowIndex * columns
+        index = pointToIndex (columnIndex, rowIndex)
         adjacents = adjacentLights (columnIndex, rowIndex)
         isLightOrAdjacent i = i == index || List.member (indexToPoint i) adjacents
         l = log "adjacents" adjacents
@@ -73,10 +99,9 @@ update msg model =
                 { model | lights = lights' }
 
         RePlay ->
-            { model | lights = False :: repeat (rows * columns - 1) True }
+            randomLights model.seed
 
-
-viewLight : (Int, Int) -> Bool -> Html Msg
+viewLight : Point -> Bool -> Html Msg
 viewLight (columnIndex, rowIndex) lightOn =
     td [ style [ ("background", if lightOn then "blue" else "black" )
                 , ("width", "10vw")
@@ -110,5 +135,7 @@ view model =
                       , button [ onClick RePlay ] [ text "replay" ]
                       ]
             else
-                text ""
+               div [] [ text "Do you want to restart?"
+                      , button [ onClick RePlay ] [ text "restart" ]
+                      ]
         ]
