@@ -1,6 +1,6 @@
 module LightsOut exposing (adjacentLights, model, view, update, rows, columns)
 
-import Html exposing (Html, div, table, tr, td, text)
+import Html exposing (Html, div, table, tr, td, text, button, strong)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import List exposing (repeat)
@@ -8,6 +8,7 @@ import Debug exposing (log)
 import List.Split exposing (chunksOfLeft)
 
 type Msg = ToggleLight (Int, Int)
+    | RePlay
 
 type alias Model = { lights: Lights }
 
@@ -21,7 +22,7 @@ columns = 4
 
 model : Model
 model =
-    { lights = repeat (columns * 4) True }
+    { lights = repeat (columns * rows) True }
 
 
 adjacentLights : (Int, Int) -> List (Int,Int)
@@ -57,6 +58,10 @@ toggleLightAndAdjacents (columnIndex, rowIndex) lights =
         List.indexedMap (\i l -> if isLightOrAdjacent i then not l else l) lights
 
 
+isGameOver : Model -> Bool
+isGameOver model =
+    List.all ((==) True) model.lights
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -67,9 +72,12 @@ update msg model =
             in
                 { model | lights = lights' }
 
+        RePlay ->
+            { model | lights = False :: repeat (rows * columns - 1) True }
 
-viewBox : (Int, Int) -> Bool -> Html Msg
-viewBox (columnIndex, rowIndex) lightOn =
+
+viewLight : (Int, Int) -> Bool -> Html Msg
+viewLight (columnIndex, rowIndex) lightOn =
     td [ style [ ("background", if lightOn then "blue" else "black" )
                 , ("width", "10vw")
                 , ("height", "10vw")
@@ -81,13 +89,26 @@ viewBox (columnIndex, rowIndex) lightOn =
 
 viewRow : Int -> Lights -> Html Msg
 viewRow rowIndex rowLights =
-    tr [] ( List.indexedMap (\columnIndex lights -> viewBox (columnIndex, rowIndex) lights) rowLights )
+    tr [] ( List.indexedMap (\columnIndex lights -> viewLight (columnIndex, rowIndex) lights) rowLights )
 
 
-view : Model -> Html Msg
-view model =
+viewLights : Model -> Html Msg
+viewLights model =
     let
         chunks = chunksOfLeft rows model.lights
     in
         table []
             (List.indexedMap viewRow chunks)
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ viewLights model
+          , if isGameOver model then
+               div [] [ strong [] [text "Congratulations! Click the button to replay."]
+                      , button [ onClick RePlay ] [ text "replay" ]
+                      ]
+            else
+                text ""
+        ]
